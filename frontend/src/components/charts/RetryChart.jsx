@@ -1,29 +1,26 @@
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+const data = [
+  { day: "Mon", retries: 5 },
+  { day: "Tue", retries: 8 },
+  { day: "Wed", retries: 3 },
+  { day: "Thu", retries: 10 },
+  { day: "Fri", retries: 6 }
+];
+
 const RetryChart = () => {
   return (
-    <div
-      style={{
-        background: "#ffffff",
-        borderRadius: "18px",
-        padding: "24px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-      }}
-    >
-      <h3 style={{ color: "#1e293b", marginBottom: "10px" }}>
-        Retry Attempts Analytics
-      </h3>
+    <div className="chart-card">
+      
 
-      <p style={{ color: "#64748b", fontSize: "14px" }}>
-        Tracks retry frequency handled by exponential backoff worker engine.
-      </p>
-
-      <div
-        style={{
-          height: "150px",
-          marginTop: "20px",
-          background: "linear-gradient(135deg, #22c55e, #4ade80)",
-          borderRadius: "12px",
-        }}
-      />
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={data}>
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="retries" fill="#f59e0b" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };

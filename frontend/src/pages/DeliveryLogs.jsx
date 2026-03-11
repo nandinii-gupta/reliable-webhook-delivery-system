@@ -1,32 +1,105 @@
 const DeliveryLogs = () => {
+
+  const logs = [
+    {
+      id: "evt_3021",
+      endpoint: "/payments",
+      status: "Delivered",
+      code: 200,
+      attempts: 1,
+      time: "1 min ago",
+      latency: "210ms"
+    },
+    {
+      id: "evt_3020",
+      endpoint: "/orders",
+      status: "Failed",
+      code: 500,
+      attempts: 3,
+      time: "3 min ago",
+      latency: "520ms"
+    },
+    {
+      id: "evt_3019",
+      endpoint: "/billing",
+      status: "Delivered",
+      code: 200,
+      attempts: 1,
+      time: "6 min ago",
+      latency: "180ms"
+    },
+    {
+      id: "evt_3018",
+      endpoint: "/users",
+      status: "Retrying",
+      code: 502,
+      attempts: 2,
+      time: "8 min ago",
+      latency: "430ms"
+    }
+  ];
+
   return (
-    <div style={{ padding: "40px" }}>
-      <h1 style={{ fontSize: "32px", fontWeight: "800", color: "#0f172a" }}>
-        Webhook Delivery Logs
-      </h1>
-      <p style={{ color: "#64748b", marginTop: "10px", maxWidth: "700px" }}>
-        Tracks webhook attempts, retries, failures, and successful deliveries
-        for system reliability monitoring.
+    <div className="page">
+
+      <p className="page-desc">
+        Detailed history of webhook delivery attempts and server responses.
       </p>
 
-      <div
-        style={{
-          marginTop: "30px",
-          background: "#ffffff",
-          padding: "24px",
-          borderRadius: "18px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
-        }}
-      >
-        <h3 style={{ fontSize: "20px", fontWeight: "700" }}>
-          Recent Logs
-        </h3>
-        <p style={{ marginTop: "12px", color: "#334155" }}>
-          WH_001 — Delivered<br />
-          WH_002 — Pending Retry<br />
-          WH_003 — Failed (Timeout)
-        </p>
+      <div className="card">
+
+        <table className="table">
+
+          <thead>
+            <tr>
+              <th>Event ID</th>
+              <th>Endpoint</th>
+              <th>Status</th>
+              <th>HTTP Code</th>
+              <th>Attempts</th>
+              <th>Latency</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {logs.map((log)=>(
+              <tr key={log.id}>
+
+                <td>{log.id}</td>
+
+                <td>{log.endpoint}</td>
+
+                <td
+                  className={
+                    log.status === "Delivered"
+                      ? "success"
+                      : log.status === "Failed"
+                      ? "failed"
+                      : "retry"
+                  }
+                >
+                  {log.status}
+                </td>
+
+                <td>{log.code}</td>
+
+                <td>{log.attempts}</td>
+
+                <td>{log.latency}</td>
+
+                <td>{log.time}</td>
+
+              </tr>
+            ))}
+
+          </tbody>
+
+        </table>
+
       </div>
+
     </div>
   );
 };

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Webhook = require("../models/Webhook");
 
-// POST - Queue a webhook
 router.post("/queue", async (req, res) => {
   try {
     const { targetUrl, payload, idempotencyKey } = req.body;

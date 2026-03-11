@@ -1,31 +1,41 @@
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const data = [
+  { day: "Mon", value: 20 },
+  { day: "Tue", value: 35 },
+  { day: "Wed", value: 40 },
+  { day: "Thu", value: 50 },
+  { day: "Fri", value: 65 },
+];
+
 const DeliveryChart = () => {
   return (
-    <div
-      style={{
-        background: "#ffffff",
-        borderRadius: "18px",
-        padding: "24px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-      }}
-    >
-      <h3 style={{ color: "#1e293b", marginBottom: "10px" }}>
-        Webhook Delivery Performance
-      </h3>
+    <ResponsiveContainer width="100%" height={250}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
 
-      <p style={{ color: "#64748b", fontSize: "14px" }}>
-        Visualizing successful vs failed webhook deliveries over time to monitor
-        system reliability.
-      </p>
+        <XAxis dataKey="day" />
 
-      <div
-        style={{
-          height: "150px",
-          marginTop: "20px",
-          background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
-          borderRadius: "12px",
-        }}
-      />
-    </div>
+        <YAxis />
+
+        <Tooltip />
+
+        <Line
+          type="monotone"
+          dataKey="value"
+          stroke="#3b82f6"
+          strokeWidth={3}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };
 
