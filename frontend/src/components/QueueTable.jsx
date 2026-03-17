@@ -1,19 +1,8 @@
+import { useContext } from "react";
+import { WebhookContext } from "../context/WebhookContext";
+
 const QueueTable = () => {
-  const data = [
-    {
-      id: 1,
-      event: "payment.completed",
-      endpoint: "/api/payments",
-      status: "Queued",
-    },
-    { id: 2, event: "user.created", endpoint: "/api/users", status: "Queued" },
-    {
-      id: 3,
-      event: "order.created",
-      endpoint: "/api/orders",
-      status: "Processing",
-    },
-  ];
+  const { events } = useContext(WebhookContext) || { events: [] };
 
   return (
     <div className="table-card">
@@ -23,21 +12,31 @@ const QueueTable = () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Event</th>
-            <th>Endpoint</th>
             <th>Status</th>
+            <th>Retries</th>
+            <th>Created</th>
           </tr>
         </thead>
 
         <tbody>
-          {data.map((row) => (
-            <tr key={row.id}>
-              <td>{row.id}</td>
-              <td>{row.event}</td>
-              <td>{row.endpoint}</td>
-              <td>{row.status}</td>
+          {!events || events.length === 0 ? (
+            <tr>
+              <td colSpan="4">No events yet</td>
             </tr>
-          ))}
+          ) : (
+            events.map((event) => (
+              <tr key={event._id}>
+                <td>{event._id?.slice(0, 6)}</td>
+                <td>{event.status}</td>
+                <td>{event.retries}</td>
+                <td>
+                  {event.createdAt
+                    ? new Date(event.createdAt).toLocaleTimeString()
+                    : "-"}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

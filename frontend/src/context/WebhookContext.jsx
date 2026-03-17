@@ -1,36 +1,54 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import { fetchEvents, triggerWebhook as triggerAPI } from "../services/api";
 
 export const WebhookContext = createContext();
 
 export const WebhookProvider = ({ children }) => {
-  const [queue, setQueue] = useState([
-    { id: "evt_1023", endpoint: "/payments", status: "Processing", attempts: 1, time: "2s ago" },
-    { id: "evt_1022", endpoint: "/orders", status: "Queued", attempts: 0, time: "5s ago" }
-  ]);
 
+  const [events, setEvents] = useState([]);
   const [notification, setNotification] = useState("");
 
-  const triggerWebhook = () => {
-    const newEvent = {
-      id: "evt_" + Math.floor(Math.random() * 9000 + 1000),
-      endpoint: "/payments",
-      status: "Queued",
-      attempts: 0,
-      time: "Just now"
-    };
-
-    setQueue(prev => [newEvent, ...prev]);
-
-    setNotification("Webhook triggered successfully");
-
-    setTimeout(() => {
-      setNotification("");
-    }, 2000);
+  const loadEvents = async () => {
+    try {
+      const data = await fetchEvents();
+      setEvents(data);
+    } catch (err) {
+      console.error("Failed to fetch events", err);
+    }
   };
+
+  const triggerWebhook = async () => {
+    try {
+      await triggerAPI();
+
+      setNotification("Webhook event triggered!");
+
+      loadEvents();
+
+      setTimeout(() => {
+        setNotification("");
+      }, 3000);
+
+    } catch (error) {
+      console.error("Trigger failed", error);
+    }
+  };
+
+  useEffect(() => {
+    loadEvents();
+
+    const interval = setInterval(loadEvents, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <WebhookContext.Provider
-      value={{ queue, triggerWebhook, notification }}
+      value={{
+        events,
+        triggerWebhook,
+        notification
+      }}
     >
       {children}
     </WebhookContext.Provider>

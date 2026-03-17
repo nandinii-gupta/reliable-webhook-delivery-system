@@ -1,30 +1,33 @@
+import { useContext } from "react";
+import { WebhookContext } from "../../context/WebhookContext";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+
+const COLORS = ["#22c55e", "#ef4444", "#3b82f6"];
+
 const SuccessPieChart = () => {
+  const { events } = useContext(WebhookContext);
+
+  const delivered = events.filter(e => e.status === "delivered").length;
+  const failed = events.filter(e => e.status === "failed").length;
+  const pending = events.filter(e => e.status === "pending").length;
+
+  const data = [
+    { name: "Delivered", value: delivered },
+    { name: "Failed", value: failed },
+    { name: "Pending", value: pending },
+  ];
+
   return (
-    <div
-      style={{
-        background: "#ffffff",
-        borderRadius: "18px",
-        padding: "24px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-      }}
-    >
-      <h3 style={{ color: "#1e293b", marginBottom: "10px" }}>
-        Success vs Failure Ratio
-      </h3>
-
-      <p style={{ color: "#64748b", fontSize: "14px" }}>
-        Distribution of delivered, pending, and failed webhooks in the system.
-      </p>
-
-      <div
-        style={{
-          height: "150px",
-          marginTop: "20px",
-          background: "linear-gradient(135deg, #ef4444, #f87171)",
-          borderRadius: "12px",
-        }}
-      />
-    </div>
+    <ResponsiveContainer width="100%" height={250}>
+      <PieChart>
+        <Pie data={data} dataKey="value" outerRadius={90} label>
+          {data.map((entry, index) => (
+            <Cell key={index} fill={COLORS[index]} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
   );
 };
 

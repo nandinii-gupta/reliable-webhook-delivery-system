@@ -1,53 +1,71 @@
-import DeliveryChart from "../components/charts/DeliveryChart";
-import RetryChart from "../components/charts/RetryChart";
+import { useContext } from "react";
+import { WebhookContext } from "../context/WebhookContext";
 
 const SystemMetrics = () => {
+
+  const { events } = useContext(WebhookContext);
+
+  const total = events.length;
+
+  const delivered = events.filter(
+    (e) => e.status === "delivered"
+  ).length;
+
+  const failed = events.filter(
+    (e) => e.status === "failed"
+  ).length;
+
+  const pending = events.filter(
+    (e) => e.status === "pending"
+  ).length;
+
+  const totalRetries = events.reduce(
+    (sum, e) => sum + e.retries,
+    0
+  );
+
+  const successRate =
+    total === 0
+      ? 0
+      : Math.round((delivered / total) * 100);
 
   return (
     <div className="page">
 
       <p className="page-desc">
-        Monitor system performance, delivery throughput, retry patterns and worker processing health.
+        Monitor system health and webhook delivery performance.
       </p>
 
-
-      {/* Metric Cards */}
-      <div className="metrics-cards">
+      <div className="metrics-grid">
 
         <div className="metric-card">
-          <span>Throughput</span>
-          <h2>24 events/sec</h2>
+          <span>Total Events</span>
+          <h2>{total}</h2>
+        </div>
+
+        <div className="metric-card">
+          <span>Delivered</span>
+          <h2>{delivered}</h2>
+        </div>
+
+        <div className="metric-card">
+          <span>Failed</span>
+          <h2>{failed}</h2>
+        </div>
+
+        <div className="metric-card">
+          <span>Pending</span>
+          <h2>{pending}</h2>
+        </div>
+
+        <div className="metric-card">
+          <span>Total Retries</span>
+          <h2>{totalRetries}</h2>
         </div>
 
         <div className="metric-card">
           <span>Success Rate</span>
-          <h2>96.2%</h2>
-        </div>
-
-        <div className="metric-card">
-          <span>Retry Rate</span>
-          <h2>3.1%</h2>
-        </div>
-
-        <div className="metric-card">
-          <span>Worker Latency</span>
-          <h2>180 ms</h2>
-        </div>
-
-      </div>
-
-
-      {/* Charts */}
-      <div className="metrics-grid">
-
-        <div className="chart-card">
-          <h3>Webhook Throughput</h3>
-          <DeliveryChart />
-        </div>
-
-        <div className="chart-card">
-          <h3>Retry Distribution</h3>
-          <RetryChart />
+          <h2>{successRate}%</h2>
         </div>
 
       </div>

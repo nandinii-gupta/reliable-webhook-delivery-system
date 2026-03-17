@@ -1,39 +1,36 @@
+import { useContext } from "react";
+import { WebhookContext } from "../../context/WebhookContext";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { day: "Mon", value: 20 },
-  { day: "Tue", value: 35 },
-  { day: "Wed", value: 40 },
-  { day: "Thu", value: 50 },
-  { day: "Fri", value: 65 },
-];
-
 const DeliveryChart = () => {
+  const { events } = useContext(WebhookContext);
+
+  const delivered = events.filter(e => e.status === "delivered").length;
+  const failed = events.filter(e => e.status === "failed").length;
+  const pending = events.filter(e => e.status === "pending").length;
+
+  const data = [
+    { name: "Delivered", value: delivered },
+    { name: "Failed", value: failed },
+    { name: "Pending", value: pending },
+  ];
+
   return (
     <ResponsiveContainer width="100%" height={250}>
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-
-        <XAxis dataKey="day" />
-
+        <XAxis dataKey="name" />
         <YAxis />
-
         <Tooltip />
-
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#3b82f6"
-          strokeWidth={3}
-        />
+        <Line type="monotone" dataKey="value" stroke="#3b82f6" />
       </LineChart>
     </ResponsiveContainer>
   );

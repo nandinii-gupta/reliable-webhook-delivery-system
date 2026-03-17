@@ -1,17 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./styles/global.css";
-
 import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 import { WebhookProvider } from "./context/WebhookContext";
 
+import "./index.css";
+import "./styles/global.css";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-
-  <BrowserRouter>
-    <WebhookProvider>
-      <App />
-    </WebhookProvider>
-  </BrowserRouter>
-
+  <React.StrictMode>
+    <BrowserRouter>
+      <WebhookProvider>
+        <App />
+      </WebhookProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );

@@ -412,3 +412,27 @@ opacity:1;
 transform:translateY(0);
 }
 }
+
+.status-green{
+background:#dcfce7;
+color:#15803d;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+}
+
+.status-red{
+background:#fee2e2;
+color:#b91c1c;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+}
+
+.status-yellow{
+background:#fef3c7;
+color:#92400e;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+}
