@@ -3,7 +3,7 @@ const Event = require("../models/Event");
 
 const WEBHOOK_URL = "http://localhost:5000/test-webhook";
 
-const processEvents = async () => {
+const processWebhooks = async () => {
 
   const events = await Event.find({ status: "pending" });
 
@@ -17,25 +17,19 @@ const processEvents = async () => {
 
       await event.save();
 
+      console.log("Webhook delivered:", event._id);
+
     } catch (error) {
 
       event.retries += 1;
 
-      const delay = Math.pow(2, event.retries) * 1000;
+      if (event.retries >= 3) {
+        event.status = "failed";
+      }
 
-      console.log(
-        `Retrying event ${event._id} after ${delay}ms`
-      );
+      await event.save();
 
-      setTimeout(async () => {
-
-        if (event.retries >= 3) {
-          event.status = "failed";
-        }
-
-        await event.save();
-
-      }, delay);
+      console.log("Webhook retry:", event._id);
 
     }
 
@@ -43,4 +37,4 @@ const processEvents = async () => {
 
 };
 
-module.exports = processEvents;
+setInterval(processWebhooks, 4000);

@@ -1,113 +1,106 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { WebhookContext } from "../context/WebhookContext";
-import EventModal from "../components/EventModal";
 
 const QueueMonitor = () => {
+
   const { events } = useContext(WebhookContext);
 
-  const [filter, setFilter] = useState("all");
-  const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const filteredEvents =
-    filter === "all" ? events : events.filter((e) => e.status === filter);
+  const queue = events.filter(e => e.status === "pending");
+  const recent = events.slice(0, 5);
 
   return (
     <div className="page">
-      <p className="page-desc">
-        Monitor live webhook events waiting to be processed by delivery workers.
-      </p>
 
-      {/* Filter Buttons */}
-      <div style={{ marginBottom: "15px" }}>
-        <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("delivered")}>Delivered</button>
-        <button onClick={() => setFilter("failed")}>Failed</button>
-        <button onClick={() => setFilter("pending")}>Pending</button>
+      {/* HEADER */}
+      <div className="page-header">
+        <div>
+          {/* <h2>Webhook Queue Monitor</h2> */}
+          <p className="page-desc">
+            Live processing of webhook events
+          </p>
+        </div>
+
+        <span className={`status-badge ${queue.length > 0 ? "active" : "idle"}`}>
+          {queue.length > 0 ? "● Processing" : "● Idle"}
+        </span>
       </div>
 
-      {/* Queue Stats */}
-      <div className="queue-stats">
-        <div className="queue-card">
-          <span>Queue Size</span>
-          <h2>{filteredEvents.length}</h2>
+      {/* STATS */}
+      <div className="stats-grid">
+
+        <div className="stat-card">
+          <h4>Queue Size</h4>
+          <p>{queue.length}</p>
         </div>
 
-        <div className="queue-card">
-          <span>Processing Rate</span>
-          <h2>18 / sec</h2>
+        <div className="stat-card">
+          <h4>Status</h4>
+          <p>{queue.length > 0 ? "Active" : "Idle"}</p>
         </div>
 
-        <div className="queue-card">
-          <span>Active Workers</span>
-          <h2>3</h2>
+        <div className="stat-card">
+          <h4>Recent Events</h4>
+          <p>{recent.length}</p>
         </div>
 
-        <div className="queue-card">
-          <span>Oldest Job</span>
-          <h2>12s</h2>
-        </div>
       </div>
 
-      {/* Queue Table */}
+      {/* TABLE */}
       <div className="card">
         <table className="table">
+
           <thead>
             <tr>
-              <th>Event ID</th>
+              <th>ID</th>
               <th>Endpoint</th>
+              <th>Retries</th>
               <th>Status</th>
-              <th>Attempts</th>
-              <th>Queued</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredEvents.length === 0 ? (
-              <tr>
-                <td colSpan="5">No events found</td>
-              </tr>
-            ) : (
-              filteredEvents.map((event) => (
-                <tr
-                  key={event._id}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setSelectedEvent(event)}
-                >
-                  <td>{event._id.slice(0, 6)}</td>
 
-                  <td>/test-webhook</td>
-
-                  <td
-                    className={
-                      event.status === "delivered"
-                        ? "status-green"
-                        : event.status === "failed"
-                          ? "status-red"
-                          : "status-yellow"
-                    }
-                  >
-                    {event.status}
-                  </td>
-
+            {/* ACTIVE QUEUE */}
+            {queue.length > 0 &&
+              queue.map(event => (
+                <tr key={event._id}>
+                  <td>{event._id.slice(-5)}</td>
+                  <td>{event.endpoint || "/test-webhook"}</td>
                   <td>{event.retries}</td>
-
-                  <td>
-                    {event.createdAt
-                      ? new Date(event.createdAt).toLocaleTimeString()
-                      : "-"}
+                  <td className="status-text pending">
+                    PROCESSING
                   </td>
                 </tr>
               ))
-            )}
+            }
+
+            {/* FALLBACK */}
+            {queue.length === 0 &&
+              recent.map(event => (
+                <tr key={event._id}>
+                  <td>{event._id.slice(-5)}</td>
+                  <td>{event.endpoint || "/test-webhook"}</td>
+                  <td>{event.retries}</td>
+                  <td className={`status-text ${event.status}`}>
+                    {event.status.toUpperCase()}
+                  </td>
+                </tr>
+              ))
+            }
+
           </tbody>
+
         </table>
       </div>
 
-      {/* Event Details Modal */}
-      <EventModal
-        event={selectedEvent}
-        onClose={() => setSelectedEvent(null)}
-      />
+      {}
+      {queue.length === 0 && (
+        <div className="empty-state">
+          <p>🚀 System is healthy</p>
+          <span>No pending events in queue</span>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -4,7 +4,6 @@ const eventSchema = new mongoose.Schema({
   payload: Object,
   status: {
     type: String,
-    enum: ["pending", "delivered", "failed"],
     default: "pending",
   },
   retries: {

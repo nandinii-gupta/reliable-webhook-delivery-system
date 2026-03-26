@@ -1,5 +1,9 @@
 import { createContext, useState, useEffect } from "react";
-import { fetchEvents, triggerWebhook as triggerAPI } from "../services/api";
+import {
+  fetchEvents,
+  triggerWebhook as triggerAPI,
+  retryEvent
+} from "../services/api";
 
 export const WebhookContext = createContext();
 
@@ -7,6 +11,7 @@ export const WebhookProvider = ({ children }) => {
 
   const [events, setEvents] = useState([]);
   const [notification, setNotification] = useState("");
+
 
   const loadEvents = async () => {
     try {
@@ -21,25 +26,45 @@ export const WebhookProvider = ({ children }) => {
     try {
       await triggerAPI();
 
-      setNotification("Webhook event triggered!");
+      setNotification("Webhook event triggered ✅");
 
       loadEvents();
 
-      setTimeout(() => {
-        setNotification("");
-      }, 3000);
-
     } catch (error) {
       console.error("Trigger failed", error);
+      setNotification("Failed to trigger webhook ❌");
     }
+
+    setTimeout(() => setNotification(""), 2500);
+  };
+
+
+  const retryWebhook = async (id) => {
+    try {
+      await retryEvent(id);
+
+      setNotification("Retry attempted 🔁");
+
+      loadEvents();
+
+    } catch (error) {
+      console.error("Retry failed", error);
+      setNotification("Retry failed ❌");
+    }
+
+    setTimeout(() => setNotification(""), 2500);
   };
 
   useEffect(() => {
+
     loadEvents();
 
-    const interval = setInterval(loadEvents, 3000);
+    const interval = setInterval(() => {
+      loadEvents();
+    }, 2000);
 
     return () => clearInterval(interval);
+
   }, []);
 
   return (
@@ -47,7 +72,9 @@ export const WebhookProvider = ({ children }) => {
       value={{
         events,
         triggerWebhook,
-        notification
+        retryWebhook,   
+        notification,
+        refreshEvents: loadEvents
       }}
     >
       {children}

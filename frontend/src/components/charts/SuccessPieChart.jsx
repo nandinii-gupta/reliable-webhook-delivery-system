@@ -1,11 +1,8 @@
-import { useContext } from "react";
-import { WebhookContext } from "../../context/WebhookContext";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
-const COLORS = ["#22c55e", "#ef4444", "#3b82f6"];
+const COLORS = ["#22c55e", "#ef4444", "#f59e0b"];
 
-const SuccessPieChart = () => {
-  const { events } = useContext(WebhookContext);
+const SuccessPieChart = ({ events }) => {
 
   const delivered = events.filter(e => e.status === "delivered").length;
   const failed = events.filter(e => e.status === "failed").length;
@@ -18,16 +15,22 @@ const SuccessPieChart = () => {
   ];
 
   return (
-    <ResponsiveContainer width="100%" height={250}>
-      <PieChart>
-        <Pie data={data} dataKey="value" outerRadius={90} label>
-          {data.map((entry, index) => (
-            <Cell key={index} fill={COLORS[index]} />
-          ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
-    </ResponsiveContainer>
+    <PieChart width={280} height={240}>
+      <Pie
+        data={data}
+        cx="50%"
+        cy="50%"
+        outerRadius={80}
+        dataKey="value"
+        label
+      >
+        {data.map((entry, index) => (
+          <Cell key={index} fill={COLORS[index]} />
+        ))}
+      </Pie>
+
+      <Tooltip />
+    </PieChart>
   );
 };
 

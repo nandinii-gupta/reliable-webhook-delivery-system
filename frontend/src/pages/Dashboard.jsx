@@ -4,6 +4,7 @@ import { WebhookContext } from "../context/WebhookContext";
 import StatCard from "../components/StatCard";
 import DeliveryChart from "../components/charts/DeliveryChart";
 import RetryChart from "../components/charts/RetryChart";
+import SuccessPieChart from "../components/charts/SuccessPieChart";
 import RetryWorker from "../components/RetryWorker";
 import QueueTable from "../components/QueueTable";
 import FailedTable from "../components/FailedTable";
@@ -29,21 +30,21 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
 
-      {/* Toast Notification */}
+      {}
       {notification && (
         <div className="toast">
           {notification}
         </div>
       )}
 
-      {/* Trigger Button */}
+      {}
       <div className="simulator">
         <button onClick={triggerWebhook}>
           Trigger Webhook Event
         </button>
       </div>
 
-      {/* Stats Cards */}
+      {}
       <div className="stats-grid">
 
         <StatCard
@@ -72,35 +73,31 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Charts */}
+      {}
       <div className="charts-grid">
 
         <div className="chart-card">
           <h3>Webhook Delivery Trend</h3>
-          <DeliveryChart />
+          <DeliveryChart events={events} />
         </div>
 
         <div className="chart-card">
           <h3>Retry Attempts</h3>
-          <RetryChart />
+          <RetryChart events={events} />
+        </div>
+
+        {}
+        <div className="chart-card">
+          <h3>Delivery Distribution</h3>
+          <SuccessPieChart events={events} />
         </div>
 
       </div>
 
-      {/* Retry Worker Status */}
+      {}
       <div className="worker-grid">
         <RetryWorker />
       </div>
-      
-      {/* Tables */}
-      <div className="tables-grid">
-
-        <QueueTable />
-
-        <FailedTable />
-
-      </div>
-
     </div>
   );
 };

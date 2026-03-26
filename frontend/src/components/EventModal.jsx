@@ -5,19 +5,25 @@ const EventModal = ({ event, onClose }) => {
   return (
     <div className="modal-overlay">
 
-      <div className="modal">
+      <div className="modal-card">
 
-        <h3>Webhook Event Details</h3>
+        <h2>Webhook Event Details</h2>
 
-        <p><b>ID:</b> {event._id}</p>
-        <p><b>Status:</b> {event.status}</p>
-        <p><b>Retries:</b> {event.retries}</p>
+        <div className="modal-info">
+          <p><b>ID:</b> {event._id}</p>
+          <p><b>Status:</b> {event.status}</p>
+          <p><b>Retries:</b> {event.retries}</p>
+        </div>
 
-        <pre>
+        <h4>Payload</h4>
+
+        <pre className="payload-box">
           {JSON.stringify(event.payload, null, 2)}
         </pre>
 
-        <button onClick={onClose}>Close</button>
+        <button className="close-btn" onClick={onClose}>
+          Close
+        </button>
 
       </div>
 
