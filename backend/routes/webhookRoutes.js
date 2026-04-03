@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Webhook = require("../models/Webhook");
 
+const { createWebhook, getWebhooks } = require("../controllers/webhookController");
+
+router.post("/webhook", createWebhook);
+router.get("/logs", getWebhooks);
+
 router.post("/queue", async (req, res) => {
   try {
     const { targetUrl, payload, idempotencyKey } = req.body;
@@ -27,7 +32,6 @@ router.post("/queue", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 router.get("/", async (req, res) => {
   try {
