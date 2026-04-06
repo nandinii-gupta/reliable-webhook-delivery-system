@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const { startWorker } = require("./workers/worker");
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -11,9 +11,13 @@ app.use(express.json());
 
 // MongoDB connect
 mongoose.connect("mongodb+srv://nikki:00000000@cluster0.sqfvor7.mongodb.net/webhookDB")
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch(err => console.log("DB Error:", err));
+  .then(() => {
+    console.log("MongoDB Connected ✅");
 
+    // 👇 IMPORTANT FIX
+    startWorker();
+  })
+  .catch(err => console.log("DB Error:", err));
 // ✅ IMPORT ROUTES
 const webhookRoutes = require("./routes/webhookRoutes");
 

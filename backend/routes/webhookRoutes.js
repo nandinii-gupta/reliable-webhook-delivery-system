@@ -2,11 +2,22 @@ const express = require("express");
 const router = express.Router();
 const Webhook = require("../models/Webhook");
 
-const { createWebhook, getWebhooks } = require("../controllers/webhookController");
+const {
+  createWebhook,
+  getWebhooks,
+  getStats
+} = require("../controllers/webhookController");
 
+// ✅ Trigger webhook
 router.post("/webhook", createWebhook);
+
+// ✅ Logs
 router.get("/logs", getWebhooks);
 
+// ✅ Stats (🔥 important)
+router.get("/stats", getStats);
+
+// ✅ Queue API (optional advanced)
 router.post("/queue", async (req, res) => {
   try {
     const { targetUrl, payload, idempotencyKey } = req.body;
@@ -20,6 +31,10 @@ router.post("/queue", async (req, res) => {
       targetUrl,
       payload,
       idempotencyKey,
+      status: "pending",
+      attempts: 0,
+      maxAttempts: 5,
+      nextRetryAt: new Date()
     });
 
     await webhook.save();
@@ -28,11 +43,13 @@ router.post("/queue", async (req, res) => {
       message: "Webhook queued successfully",
       webhook,
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+// ✅ fallback logs
 router.get("/", async (req, res) => {
   try {
     const webhooks = await Webhook.find().sort({ createdAt: -1 });
